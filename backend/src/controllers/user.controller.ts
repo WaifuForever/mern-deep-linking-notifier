@@ -23,7 +23,7 @@ const store = async (req: Request, res: Response) => {
 
 
 const list = async (req: Request, res: Response) => {
-
+   
     User.find()
         .then(result => {            
             return res.status(200).json({ message: 'Users list retrieved', data: result });
@@ -34,6 +34,9 @@ const list = async (req: Request, res: Response) => {
 };
 
 const findById = async (req: Request, res: Response) => {
+    console.log(req.body)
+    console.log(req.query)
+    console.log(req.params)
     const { _id } = req.query;
 
     User.findById(_id)
