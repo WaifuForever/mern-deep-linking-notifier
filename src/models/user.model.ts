@@ -5,29 +5,37 @@ export interface IUser {
     password: string;
     name: string;
     admin?: boolean;
+    tokenVersion: number;
 }
 
-const UserSchema: Schema = new Schema({
-    email: {
-        type: String,
-        required: true,
-        unique: true,
+const UserSchema: Schema = new Schema(
+    {
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+        },
+        name: {
+            type: String,
+            required: true,
+            unique: true,
+        },
+        password: {
+            type: String,
+            required: true,
+            select: false,
+        },
+        admin: {
+            type: Boolean,
+            default: false,
+            select: false,
+        },
+        tokenVersion: {
+            type: Number,
+            default: 0,
+        },
     },
-    name: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    password: {
-        type: String,
-        required: true,
-        select: false,
-    },
-    admin: {
-        type: Boolean,
-        default: false,
-        select: false,
-    },
-});
+    { timestamps: true },
+);
 
 export default mongoose.model<IUser>('User', UserSchema);
