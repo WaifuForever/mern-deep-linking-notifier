@@ -7,7 +7,7 @@
     "author": "wf",
     "license": "MIT",
     "scripts": {
-        "start:dev": "NODE_ENV=dev nodemon src/index.ts dotenv_config_path=./.env.dev"
+        "start:dev": "set NODE_ENV=dev && nodemon src/index.ts dotenv_config_path=./.env.dev"
     },
     "dependencies": {
         "dotenv": "^16.0.0",
