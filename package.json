@@ -4,10 +4,11 @@
     "description": "api to generate domains",
     "main": "src/index.ts",
     "repository": "https://github.com/WaifuForever/mern-deep-linking-notifier",
-    "author": "wf",
+    "author": "double-yoo",
     "license": "MIT",
     "scripts": {
-        "start:dev": "set NODE_ENV=dev && nodemon src/index.ts dotenv_config_path=./.env.dev"
+        "build": "tsc",
+        "start:dev": "set NODE_ENV=dev && nodemon --files src/index.ts dotenv_config_path=./.env.dev"
     },
     "dependencies": {
         "bcrypt": "^5.0.1",
