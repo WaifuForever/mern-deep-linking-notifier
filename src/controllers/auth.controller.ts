@@ -25,6 +25,7 @@ const signIn = async (req: Request, res: Response) => {
         'password',
         'tokenVersion',
     ]);
+
     const match = user
         ? await matchPassword(user.password, supposedPassword)
         : null;
@@ -38,25 +39,23 @@ const signIn = async (req: Request, res: Response) => {
     const token = jwt.generateJwt(
         {
             _id: user!._id.toString(),
-            tokenVersion: user!.tokenVersion,
+            tokenVersion: user!.tokenVersion!,
         },
         1,
     );
     const refreshToken = jwt.generateJwt(
         {
             _id: user!._id.toString(),
-            tokenVersion: user!.tokenVersion,
+            tokenVersion: user!.tokenVersion!,
         },
         2,
     );
 
     req.headers.authorization = `Bearer ${token}`;
 
-
     return res.status(200).json({
-        data: { _id: user!._id },
+        data: { accessToken: token },
         message: 'user logged in',
-        metadata: { accessToken: token },
     });
 };
 
