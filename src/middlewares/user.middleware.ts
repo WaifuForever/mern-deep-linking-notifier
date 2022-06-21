@@ -35,7 +35,10 @@ const store = async (req: Request, res: Response, next: NextFunction) => {
     req.params = req.query = {};
     schema
         .validate(req.body, { stripUnknown: true })
-        .then(() => next())
+        .then((result) => {
+            req.body = result;            
+            next();
+        })
         .catch((err: any) => {
             return res.status(400).json({
                 message: 'bad request',
@@ -57,7 +60,10 @@ const findById = async (req: Request, res: Response, next: NextFunction) => {
 
     schema
         .validate(req.query, { stripUnknown: true })
-        .then(() => next())
+        .then((result) => {
+            req.query = result;            
+            next();
+        })
         .catch((err: any) => {
             return res.status(400).json({
                 message: 'bad request',
@@ -75,7 +81,10 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
     req.params = req.query = {};
     schema
         .validate(req.body, { stripUnknown: true })
-        .then(() => next())
+        .then((result) => {
+            req.body = result;            
+            next();
+        })
         .catch((err: any) => {
             return res.status(400).json({
                 message: 'bad request',
