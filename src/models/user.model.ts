@@ -5,7 +5,7 @@ export interface IUser {
     password: string;
     name: string;
     admin?: boolean;
-    tokenVersion: number;
+    tokenVersion?: number;
 }
 
 const UserSchema: Schema = new Schema(
