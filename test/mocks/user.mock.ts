@@ -1,13 +1,12 @@
-import mongoose from 'mongoose';
 import { IUser } from '../../src/models/user.model';
 
-type MockUser = IUser & { _id: string };
+type MockUser = IUser & { _id: string, name?: any};
 
 export const admin1: MockUser = {
     email: 'goog@gmail.com',
     password: 'thisisanamazinG2passwrod@',
     name: 'Jojo',
-    _id: new mongoose.Types.ObjectId().toString(),
+    _id: '',
     admin: true,
 };
 
@@ -15,7 +14,7 @@ export const admin2: MockUser = {
     email: '321goog@gmail.com',
     password: 'thisisanamaz312inGpasswrod@',
     admin: true,
-    _id: new mongoose.Types.ObjectId().toString(),
+    _id: '',
     name: 'Jojo2',
 };
 
@@ -23,7 +22,7 @@ export const admin3: MockUser = {
     email: 'goofmail.com',
     password: 'thisisannGpasswrod@',
     admin: true,
-    _id: new mongoose.Types.ObjectId().toString(),
+    _id: '',
     name: '',
 };
 
@@ -31,7 +30,7 @@ export const user1: MockUser = {
     email: 'goo@sail.com',
     password: 'thisisanamazinG2passwrod@',
     name: 'Matt',
-    _id: new mongoose.Types.ObjectId().toString(),
+    _id: '',
     admin: false,
 };
 
@@ -39,14 +38,14 @@ export const user2: MockUser = {
     email: 'lool@gmail.com',
     password: 'thisisanamaz312inrealGpasswrod@',
     admin: false,
-    _id: new mongoose.Types.ObjectId().toString(),
+    _id: '',
     name: 'Matt2',
 };
 
 export const user3: MockUser = {
     email: 'crapmai.lcom',
     password: 'thisisannfakepasswrod@',
-    _id: new mongoose.Types.ObjectId().toString(),
+    _id: '',
     admin: false,
     name: '',
 };

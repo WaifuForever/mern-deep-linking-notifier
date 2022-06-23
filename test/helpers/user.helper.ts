@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import supertest from 'supertest';
 
 import { app } from '../../src/config/express.config';
@@ -20,8 +21,8 @@ const createUser = (payload: any, token: string, statusCode: number) => {
                 ).toBeTruthy();
 
                 //console.log(response)
-                if (response.body.data._id)
-                    payload._id = response.body.data._id;
+              
+                payload._id = response.body.data?._id ? response.body.data._id : new mongoose.Types.ObjectId().toString();
 
                 switch (statusCode) {
                     case 200:
@@ -80,6 +81,7 @@ const createUser = (payload: any, token: string, statusCode: number) => {
                         break;
 
                     case 400:
+                        //console.log(payload)
                         expect(response.status).toEqual(404);
                         expect(response.body.metadata).toBeDefined();
                         expect(response.body).toMatchObject({
