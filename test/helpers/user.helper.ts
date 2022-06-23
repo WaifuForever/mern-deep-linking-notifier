@@ -21,8 +21,10 @@ const createUser = (payload: any, token: string, statusCode: number) => {
                 ).toBeTruthy();
 
                 //console.log(response)
-              
-                payload._id = response.body.data?._id ? response.body.data._id : new mongoose.Types.ObjectId().toString();
+
+                payload._id = response.body.data?._id
+                    ? response.body.data._id
+                    : new mongoose.Types.ObjectId().toString();
 
                 switch (statusCode) {
                     case 200:
@@ -106,6 +108,63 @@ const createUser = (payload: any, token: string, statusCode: number) => {
     });
 };
 
+const findUser = (
+    payload: { _id: string | string[]; [key: string]: any },
+    token: string,
+    statusCode: number,
+) => {
+    it('GET /users/findOne', async () => {
+        let path = Array.isArray(payload._id)
+            ? `/users/findOne?_id=${payload._id[0]}&_id${payload._id[1]}`
+            : `/users/findOne?_id=${payload._id}`;
+        await supertest(app)
+            .get(path)
+            .send(payload)
+            .then(response => {
+                expect(
+                    typeof response.body === 'object' &&
+                        !Array.isArray(response.body) &&
+                        response.body !== null,
+                ).toBeTruthy();
+
+                //console.log(response.body)
+
+                switch (statusCode) {
+                    case 200:
+                        expect(response.status).toEqual(200);
+                        expect(response.body.metadata).toBeDefined();
+
+                        expect(response.body).toMatchObject({
+                            message: getMessage('user.findOne.success'),
+                        });
+
+                        break;
+
+                    case 400:
+                        //console.log(payload)
+                        expect(response.status).toEqual(400);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('default.badRequest'),
+                        });
+                        break;
+
+                    case 404:
+                        expect(response.status).toEqual(404);
+                        expect(response.body.metadata).toBeDefined();
+                        expect(response.body).toMatchObject({
+                            message: getMessage('user.notFound'),
+                        });
+
+                        break;
+
+                    default:
+                        expect(2).toBe(3);
+                        break;
+                }
+            });
+    });
+};
+
 const schema = (payload: { _id: string; email: string; name: string }) => {
     return {
         _id: payload._id,
@@ -114,4 +173,4 @@ const schema = (payload: { _id: string; email: string; name: string }) => {
     };
 };
 
-export { createUser };
+export { createUser, findUser };

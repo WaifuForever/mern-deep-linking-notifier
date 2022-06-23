@@ -28,7 +28,7 @@ describe('User', () => {
         });
     });
 
-    describeif(runAll)('should fail', () => {
+    describeif(!runAll)('should fail', () => {
         describeif(runAll)('invalid arguments', () => {
             createUser(admin3, mockToken!, 400);
             createUser(user3, mockToken!, 400);
