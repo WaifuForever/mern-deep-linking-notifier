@@ -1,0 +1,26 @@
+{  
+    "default.unauthorized": "Unauthorized request.",
+    "default.success": "Successful request.",
+    "default.badRequest": "You didn't give us what we want!",   
+    "default.serverError": "It's not you, it's us. Server Error",
+    "default.helloWorld": "Hello World!",
+
+    "invalid.object.id" : "You need to provide a valid IdObject to continue this operation.",
+    "unauthorized.refresh.token.missing": "lack credentials",
+        
+    "user.notFound": "user not found or already removed.",
+    "user.invalid.email.duplicate": "Email already in use.",
+    "user.invalid.password": "Invalid Password",
+    "user.invalid.password.short": "Password is too short - should be 8 chars minimum.",
+    "user.invalid.password.weak": "the password must contain at least 1 number, at least 1 lower case letter, at least 1 upper case and at least 1 special character.",
+    "user.valid.sign_in.success": "Successful login.",
+    "user.valid.sign_up.success": "Successful registration.",
+    "user.list.success": "User list retrieved successfully!",
+    "user.findOne.success": "User retrieved successfully!",
+    "user.update.fail": "The specified user could not be updated",
+    "user.update.success": "The specified user was updated",
+    "user.delete.fail": "The specified user could not be deleted",
+    "user.delete.success": "The specified user was deleted"
+
+
+}
