@@ -24,9 +24,9 @@
     "scripts": {
         "build": "tsc",
         "start:dev": "set NODE_ENV=dev&& nodemon --files src/index.ts dotenv_config_path=./.env.dev",
-        "test": "set NODE_ENV=test&& jest --watch --runInBand dotenv_config_path=./.env.test ",
-        "test:e2e": "set NODE_ENV=test&& jest --watchAll --runInBand --detectOpenHandles test/specs/e2e/  dotenv_config_path=./.env.test ",
-        "test:unit": "set NODE_ENV=test&& jest --watchAll --runInBand --detectOpenHandles test/specs/unit/ dotenv_config_path=./.env.test "
+        "test": "set NODE_ENV=test&& jest --clearCache && jest --watch --runInBand dotenv_config_path=./.env.test ",
+        "test:e2e": "set NODE_ENV=test&& jest --clearCache && jest --watchAll --runInBand --detectOpenHandles test/specs/e2e/  dotenv_config_path=./.env.test ",
+        "test:unit": "set NODE_ENV=test&& jest --clearCache && jest --watchAll --runInBand --detectOpenHandles test/specs/unit/ dotenv_config_path=./.env.test "
     },
     "dependencies": {
         "bcrypt": "^5.0.1",

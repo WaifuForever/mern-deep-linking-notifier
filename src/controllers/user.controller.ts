@@ -15,7 +15,7 @@ const store = async (req: Request, res: Response) => {
 
     User.create(newUser)
         .then(result => {
-            console.log(result);
+            //console.log(result);
             return res.status(200).json({
                 message: getMessage('user.valid.sign_up.success'),
                 data: {
