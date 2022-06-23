@@ -12,12 +12,13 @@ const isValidMongoIdRequired = (value: string) => {
 const rules = {
     email: yup.string().email(),
     name: yup.string().min(3).max(15),
+    admin: yup.boolean(),
     password: yup
         .string()
         .min(8)
         .matches(
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-            'Weak password! It must contains at least one uppercase/lowercase/special character',
+            'Weak password! It must contains at least one number/uppercase/lowercase/special character',
         ),
     mongoId: yup
         .string()
@@ -31,6 +32,7 @@ const store = async (req: Request, res: Response, next: NextFunction) => {
         email: rules.email.required(),
         password: rules.password.required(),
         name: rules.name.required(),
+        admin: rules.admin.required()
     });
     req.params = req.query = {};
     schema

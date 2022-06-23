@@ -3,19 +3,19 @@ import User, { IUser } from '../models/user.model';
 import { hashPassword } from '../utils/password.util';
 
 const store = async (req: Request, res: Response) => {
-    const { email, name, password }: IUser = req.body;
+    const { email, name, password, admin }: IUser = req.body;
 
     const newUser: IUser = {
         email: email,
         password: await hashPassword(password),
         name: name,
-        admin: true,
+        admin: admin,
     };
 
     User.create(newUser)
         .then(result => {
             console.log(result);
-            return res.status(200).json({ message: 'User created' });
+            return res.status(200).json({ message: 'User created', metadata: {} });
         })
         .catch(err => {
             return res.status(400).json({ message: 'bad request', error: err });
