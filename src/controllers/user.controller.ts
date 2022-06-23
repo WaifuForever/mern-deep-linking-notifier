@@ -18,6 +18,9 @@ const store = async (req: Request, res: Response) => {
             console.log(result);
             return res.status(200).json({
                 message: getMessage('user.valid.sign_up.success'),
+                data: {
+                    _id: result._id,
+                },
                 metadata: {},
             });
         })
@@ -35,6 +38,7 @@ const list = async (req: Request, res: Response) => {
             return res.status(200).json({
                 message: getMessage('user.list.success'),
                 data: result,
+                metadata: {},
             });
         })
         .catch(err => {
@@ -53,10 +57,14 @@ const findById = async (req: Request, res: Response) => {
             if (!result)
                 return res
                     .status(404)
-                    .json({ message: getMessage('user.notFound') });
+                    .json({
+                        message: getMessage('user.notFound'),
+                        metadata: {},
+                    });
             return res.status(200).json({
                 message: getMessage('user.findOne.success'),
                 data: result,
+                metadata: {},
             });
         })
         .catch(err => {
@@ -71,15 +79,14 @@ const update = async (req: Request, res: Response) => {
     User.updateOne({ _id: req.body._id }, req.body)
         .then(result => {
             if (result.matchedCount !== 0)
-                return res
-                    .status(200)
-                    .json({
-                        message: getMessage('user.update.success'),
-                        data: result,
-                    });
+                return res.status(200).json({
+                    message: getMessage('user.update.success'),
+                    data: result,
+                    metadata: {},
+                });
             return res
                 .status(404)
-                .json({ message: getMessage('user.notFound') });
+                .json({ message: getMessage('user.notFound'), metadata: {} });
         })
         .catch(err => {
             return res.status(400).json({
@@ -92,18 +99,17 @@ const update = async (req: Request, res: Response) => {
 const remove = async (req: Request, res: Response) => {
     User.deleteOne({ _id: req.query._id })
         .then(result => {
-            if (result.deletedCount !== 0) return res.status(200).json();
+            if (result.deletedCount !== 0)
+                return res.status(200).json({ metadata: {} });
             return res
                 .status(404)
                 .json({ message: getMessage('default.badRequest') });
         })
         .catch(err => {
-            return res
-                .status(400)
-                .json({
-                    message: getMessage('default.badRequest'),
-                    error: err,
-                });
+            return res.status(400).json({
+                message: getMessage('default.badRequest'),
+                error: err,
+            });
         });
 };
 
