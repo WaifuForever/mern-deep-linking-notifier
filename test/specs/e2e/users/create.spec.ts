@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { createUser } from '../../../helpers/user.helper';
 import { adminToken } from '../../../mocks/jwt.mock';
-import { user1 } from '../../../mocks/user.mock';
+import { user1, user3 } from '../../../mocks/user.mock';
 
 
 const describeif = (condition: boolean) => (condition ? describe : describe.skip);;
@@ -13,4 +13,9 @@ describe('User', () => {
     describeif(runAll)('should accept', () => {
         createUser(user1, mockToken!, 200);
     })
+
+    describeif(runAll)('should fail', () => {
+        createUser(user3, mockToken!, 400);
+    })
 })
+

@@ -16,11 +16,10 @@ const createUser = (payload: any, token:string, statusCode: number) => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-
+    
                 switch (statusCode) {
                     case 200:
                         expect(response.status).toEqual(200);
-                        expect(response.body.data).toBeDefined();
                         expect(response.body.metadata).toBeDefined();
 
                         expect(response.body).toMatchObject({

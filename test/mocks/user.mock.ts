@@ -2,13 +2,14 @@ import { IUser } from "../../src/models/user.model";
 
 export const user1: IUser = {
     email: "goog@gmail.com",
-    password: "thisisanamazinGpasswrod@",
-    name: "Jojo"
+    password: "thisisanamazinG2passwrod@",
+    name: "Jojo",
+    admin: false
 }
 
 export const user2: IUser = {
     email: "goog@gmail.com",
-    password: "thisisanamazinGpasswrod@",
+    password: "thisisanamaz312inGpasswrod@",
     name: "Jojo"
 }
 
