@@ -55,12 +55,10 @@ const findById = async (req: Request, res: Response) => {
     User.findById(_id)
         .then(result => {
             if (!result)
-                return res
-                    .status(404)
-                    .json({
-                        message: getMessage('user.notFound'),
-                        metadata: {},
-                    });
+                return res.status(404).json({
+                    message: getMessage('user.notFound'),
+                    metadata: {},
+                });
             return res.status(200).json({
                 message: getMessage('user.findOne.success'),
                 data: result,

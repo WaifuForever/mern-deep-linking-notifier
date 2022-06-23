@@ -12,7 +12,13 @@ const isValidMongoIdRequired = (value: string) => {
 };
 const rules = {
     email: yup.string().email(),
-    name: yup.string().min(3).max(15),
+    name: yup
+        .string()
+        .min(3)
+        .max(15)
+        .strict()
+        .trim()
+        .matches(/^([^0-9]*)$/, 'no numbers allowed'),
     admin: yup.boolean(),
     password: yup
         .string()
