@@ -33,7 +33,7 @@ describe('User', () => {
             createUser(admin3, mockToken!, 400);
             createUser(user3, mockToken!, 400);
 
-            describeif(runAll)('invalid name', () => {
+            describeif(!runAll)('invalid name', () => {
                 const wrongName = (change: any) => {
                     let temp = { ...admin2 };
                     //can't send a null value
@@ -62,21 +62,78 @@ describe('User', () => {
                 });
 
                 describeif(runAll)('invalid format', () => {
-                    createUser(wrongName(''), mockToken!, 400);
+                    const invalidList = [
+                        '',
+                        's',
+                        'sd',
+                        '\n\n\n',
+                        '        ',
+                        'more than 20 characters for sure',
+                    ];
 
-                    createUser(wrongName('s'), mockToken!, 400);
+                    invalidList.forEach(value => {
+                        createUser(wrongName(''), mockToken!, 400);
+                    });
+                });
+            });
 
-                    createUser(wrongName('sd'), mockToken!, 400);
+            describeif(runAll)('invalid email', () => {
+                const wrongEmail = (change: any) => {
+                    let temp = { ...admin2 };
+                    //can't send a null value
+                    if (change) temp['email'] = change;
+                    else delete temp.email;
 
-                    createUser(wrongName('\n\n\n'), mockToken!, 400);
+                    return temp;
+                };
 
-                    createUser(wrongName('       '), mockToken!, 400);
+                describeif(runAll)('invalid type', () => {
+                    createUser(wrongEmail(2), mockToken!, 400);
+
+                    createUser(wrongEmail(true), mockToken!, 400);
+
+                    createUser(wrongEmail(false), mockToken!, 400);
+
+                    createUser(wrongEmail(['']), mockToken!, 400);
 
                     createUser(
-                        wrongName('more than 20 characters for sure'),
+                        wrongEmail(JSON.stringify({ ...admin2 })),
                         mockToken!,
                         400,
                     );
+
+                    createUser(wrongEmail(undefined), mockToken!, 400);
+                });
+
+                describeif(runAll)('invalid format', () => {
+                    const invalidList = [
+                        'plainaddress',
+                        '#@%^%#$@#$@#.com',
+                        '@example.com',
+                        'Joe Smith <email@example.com>',
+                        'email.example.com',
+                        'email@example@example.com',
+                        '.email@example.com',
+                        'email.@example.com',
+                        ' email..email@example.com',
+                        'あいうえお@example.com',
+                        'email@example.com (Joe Smith)',
+                        'email@example',
+                        'email@-example.com',
+                        'email@example.web',
+                        'email@111.222.333.44444',
+                        'email@example..com',
+                        'Abc..123@example.com',
+                        '',
+                        's',
+                        'sd',
+                        '\n\n\n',
+                        '         ',
+                        'crazy thing for sure 4ddb',
+                    ];
+                    invalidList.forEach(value => {
+                        createUser(wrongEmail(value), mockToken!, 400);
+                    });
                 });
             });
         });
