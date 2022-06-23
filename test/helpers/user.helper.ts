@@ -1,6 +1,7 @@
 import supertest from 'supertest';
 
 import { app } from '../../src/config/express.config';
+import { getMessage } from '../../src/utils/message.util';
 
 const itif = (condition: boolean) => (condition ? it : it.skip);
 
@@ -23,7 +24,7 @@ const createUser = (payload: any, token:string, statusCode: number) => {
                         expect(response.body.metadata).toBeDefined();
 
                         expect(response.body).toMatchObject({
-                            message: 'User created',
+                            message: getMessage('user.valid.sign_up.success'),
                         });
 
                         break;
@@ -31,7 +32,7 @@ const createUser = (payload: any, token:string, statusCode: number) => {
                     case 400:
                         expect(response.status).toEqual(400);
                         expect(response.body).toMatchObject({
-                            message: 'default.badRequest',
+                            message: getMessage('default.badRequest'),
                             data: null,
                             metadata: expect.any(String),
                             status: 400,

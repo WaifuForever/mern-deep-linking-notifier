@@ -1,19 +1,20 @@
 import { Request, Response } from 'express';
 import User, { IUser } from '../models/user.model';
 import jwt from '../utils/jwt.util';
+import { getMessage } from '../utils/message.util';
 import { matchPassword } from '../utils/password.util';
 
 const signIn = async (req: Request, res: Response) => {
     if (!req.headers.authorization) {
         return res.status(401).json({
-            message: 'default.unauthorized',
+            message: getMessage('default.unauthorized'),
         });
     }
     const [hashType, hash] = req.headers.authorization!.split(' ');
 
     if (hashType !== 'Basic') {
         return res.status(401).json({
-            message: 'default.unauthorized',
+            message: getMessage('default.unauthorized'),
         });
     }
 
@@ -32,7 +33,7 @@ const signIn = async (req: Request, res: Response) => {
 
     if (!match) {
         return res.status(401).json({
-            message: 'default.unauthorized',
+            message: getMessage('default.unauthorized'),
         });
     }
 
@@ -55,7 +56,7 @@ const signIn = async (req: Request, res: Response) => {
 
     return res.status(200).json({
         data: { accessToken: token },
-        message: 'user logged in',
+        message: getMessage('user.valid.sign_in.success'),
     });
 };
 

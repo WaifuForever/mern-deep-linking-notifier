@@ -2,11 +2,12 @@ import { Request, Response, NextFunction } from 'express';
 
 import User from '../models/user.model';
 import jwt from '../utils/jwt.util';
+import { getMessage } from '../utils/message.util';
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
     if (!req.headers.authorization) {
         return res.status(401).json({
-            message: 'default.unauthorized',
+            message: getMessage('default.unauthorized'),
         });
     }
     const [, token] = req.headers.authorization
@@ -19,12 +20,12 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     } catch (err) {
         if (err instanceof Error)
             return res.status(401).json({
-                message: 'default.unauthorized',
+                message: getMessage('default.unauthorized'),
                 err: err.message,
             });
         else
             return res.status(401).json({
-                message: 'default.unauthorized',
+                message: getMessage('default.unauthorized'),
             });
     }
     if (process.env.NODE_ENV == 'test') return next();
@@ -36,7 +37,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
         .then(result => {
             if (!result) {
                 return res.status(401).json({
-                    message: 'default.unauthorized',
+                    message: getMessage('default.unauthorized'),
                 });
             }
             req.auth = payload._id;
@@ -59,7 +60,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
         .catch(err => {
             console.log(err);
             return res.status(400).json({
-                message: 'default.badRequest',
+                message: getMessage('default.badRequest'),
                 err: err,
             });
         });

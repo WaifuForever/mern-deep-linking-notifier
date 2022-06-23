@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import User, { IUser } from '../models/user.model';
+import { getMessage } from '../utils/message.util';
 import { hashPassword } from '../utils/password.util';
 
 const store = async (req: Request, res: Response) => {
@@ -15,22 +16,32 @@ const store = async (req: Request, res: Response) => {
     User.create(newUser)
         .then(result => {
             console.log(result);
-            return res.status(200).json({ message: 'User created', metadata: {} });
+            return res.status(200).json({
+                message: getMessage('user.valid.sign_up.sucess'),
+                metadata: {},
+            });
         })
         .catch(err => {
-            return res.status(400).json({ message: 'bad request', error: err });
+            return res.status(400).json({
+                message: getMessage('default.badRequest'),
+                error: err,
+            });
         });
 };
 
 const list = async (req: Request, res: Response) => {
     User.find()
         .then(result => {
-            return res
-                .status(200)
-                .json({ message: 'Users list retrieved', data: result });
+            return res.status(200).json({
+                message: getMessage('user.list.success'),
+                data: result,
+            });
         })
         .catch(err => {
-            return res.status(400).json({ message: 'bad request', error: err });
+            return res.status(400).json({
+                message: getMessage('default.badRequest'),
+                error: err,
+            });
         });
 };
 
@@ -40,13 +51,19 @@ const findById = async (req: Request, res: Response) => {
     User.findById(_id)
         .then(result => {
             if (!result)
-                return res.status(404).json({ message: 'User not found' });
-            return res
-                .status(200)
-                .json({ message: 'User retrieved', data: result });
+                return res
+                    .status(404)
+                    .json({ message: getMessage('user.notFound') });
+            return res.status(200).json({
+                message: getMessage('user.findOne.success'),
+                data: result,
+            });
         })
         .catch(err => {
-            return res.status(400).json({ message: 'bad request', error: err });
+            return res.status(400).json({
+                message: getMessage('default.badRequest'),
+                error: err,
+            });
         });
 };
 
@@ -56,11 +73,19 @@ const update = async (req: Request, res: Response) => {
             if (result.matchedCount !== 0)
                 return res
                     .status(200)
-                    .json({ message: 'User updated', data: result });
-            return res.status(404).json({ message: 'User not found' });
+                    .json({
+                        message: getMessage('user.update.success'),
+                        data: result,
+                    });
+            return res
+                .status(404)
+                .json({ message: getMessage('user.notFound') });
         })
         .catch(err => {
-            return res.status(400).json({ message: 'bad request', error: err });
+            return res.status(400).json({
+                message: getMessage('default.badRequest'),
+                error: err,
+            });
         });
 };
 
@@ -68,10 +93,17 @@ const remove = async (req: Request, res: Response) => {
     User.deleteOne({ _id: req.query._id })
         .then(result => {
             if (result.deletedCount !== 0) return res.status(200).json();
-            return res.status(404).json({ message: 'User not found' });
+            return res
+                .status(404)
+                .json({ message: getMessage('default.badRequest') });
         })
         .catch(err => {
-            return res.status(400).json({ message: 'bad request', error: err });
+            return res
+                .status(400)
+                .json({
+                    message: getMessage('default.badRequest'),
+                    error: err,
+                });
         });
 };
 
