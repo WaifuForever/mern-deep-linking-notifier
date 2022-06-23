@@ -11,6 +11,6 @@ describe('User', () => {
     let mockToken = adminToken(new mongoose.Types.ObjectId().toString());
 
     describeif(runAll)('should accept', () => {
-        createUser(user1, 200);
+        createUser(user1, mockToken!, 200);
     })
 })

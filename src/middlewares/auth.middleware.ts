@@ -27,6 +27,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
                 message: 'default.unauthorized',
             });
     }
+    if (process.env.NODE_ENV == 'test') return next();
 
     User.exists({
         _id: payload._id,

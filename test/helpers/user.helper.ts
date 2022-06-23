@@ -4,10 +4,11 @@ import { app } from '../../src/config/express.config';
 
 const itif = (condition: boolean) => (condition ? it : it.skip);
 
-const createUser = (payload: any, statusCode: number) => {
+const createUser = (payload: any, token:string, statusCode: number) => {
     it('POST /sign-up', async () => {
         await supertest(app)
             .post('/users')
+            .set('Authorization', 'Bearer ' + token)
             .send(payload)
             .then(response => {
                 expect(
