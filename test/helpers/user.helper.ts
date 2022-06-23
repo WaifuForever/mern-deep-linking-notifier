@@ -5,7 +5,7 @@ import { getMessage } from '../../src/utils/message.util';
 
 const itif = (condition: boolean) => (condition ? it : it.skip);
 
-const createUser = (payload: any, token:string, statusCode: number) => {
+const createUser = (payload: any, token: string, statusCode: number) => {
     it('POST /sign-up', async () => {
         await supertest(app)
             .post('/users')
@@ -17,7 +17,7 @@ const createUser = (payload: any, token:string, statusCode: number) => {
                         !Array.isArray(response.body) &&
                         response.body !== null,
                 ).toBeTruthy();
-    
+
                 switch (statusCode) {
                     case 200:
                         expect(response.status).toEqual(200);
@@ -33,9 +33,7 @@ const createUser = (payload: any, token:string, statusCode: number) => {
                         expect(response.status).toEqual(400);
                         expect(response.body).toMatchObject({
                             message: getMessage('default.badRequest'),
-                            data: null,
-                            metadata: expect.any(String),
-                            status: 400,
+                            data: expect.any(Array),
                         });
                         break;
 

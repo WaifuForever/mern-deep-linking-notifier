@@ -17,7 +17,7 @@ const store = async (req: Request, res: Response) => {
         .then(result => {
             console.log(result);
             return res.status(200).json({
-                message: getMessage('user.valid.sign_up.sucess'),
+                message: getMessage('user.valid.sign_up.success'),
                 metadata: {},
             });
         })

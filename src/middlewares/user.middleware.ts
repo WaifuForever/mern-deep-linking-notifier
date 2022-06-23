@@ -44,7 +44,7 @@ const store = async (req: Request, res: Response, next: NextFunction) => {
         })
         .catch((err: any) => {
             return res.status(400).json({
-                message: getMessage('default.unauthorized'),
+                message: getMessage('default.badRequest'),
                 data: err.errors,
             });
         });
