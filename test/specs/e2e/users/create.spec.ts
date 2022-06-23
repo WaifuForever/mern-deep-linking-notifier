@@ -77,7 +77,7 @@ describe('User', () => {
                 });
             });
 
-            describeif(runAll)('invalid email', () => {
+            describeif(!runAll)('invalid email', () => {
                 const wrongEmail = (change: any) => {
                     let temp = { ...admin2 };
                     //can't send a null value
@@ -133,6 +133,60 @@ describe('User', () => {
                     ];
                     invalidList.forEach(value => {
                         createUser(wrongEmail(value), mockToken!, 400);
+                    });
+                });
+            });
+            describeif(runAll)('invalid password', () => {
+                const wrongPassword = (change: any) => {
+                    let temp = { ...admin2 };
+                    //can't send a null value
+                    if (change) temp['password'] = change;
+                    else delete temp.password;
+
+                    return temp;
+                };
+
+                describeif(runAll)('invalid type', () => {
+                    createUser(wrongPassword(2), mockToken!, 400);
+
+                    createUser(wrongPassword(true), mockToken!, 400);
+
+                    createUser(wrongPassword(false), mockToken!, 400);
+
+                    createUser(wrongPassword(['']), mockToken!, 400);
+
+                    createUser(
+                        wrongPassword(JSON.stringify({ ...admin2 })),
+                        mockToken!,
+                        400,
+                    );
+
+                    createUser(wrongPassword(undefined), mockToken!, 400);
+                });
+
+                describeif(runAll)('invalid format', () => {
+                    const invalidList = [
+                        '0.0.0.000',
+                        '0000',
+                        '000007',
+                        '007bond',
+                        'thisisaWeakPassword',
+                        'weakPassword123',
+                        'weakpassword@123',
+                        'weakpassword',
+                        'weak@password',
+                        'weak',
+                        'weakPassword@asd',
+                        '',
+                        's',
+                        'sd',
+                        '\n\n\n',
+                        '        ',
+                        'more than 20 characters for sure',
+                    ];
+
+                    invalidList.forEach(value => {
+                        createUser(wrongPassword(''), mockToken!, 400);
                     });
                 });
             });

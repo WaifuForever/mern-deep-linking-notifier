@@ -1,6 +1,6 @@
 import { IUser } from '../../src/models/user.model';
 
-type MockUser = IUser & { _id: string, name?: any, email?: any};
+type MockUser = IUser & { _id: string, name?: any, email?: any, password?: any};
 
 export const admin1: MockUser = {
     email: 'goog@gmail.com',
