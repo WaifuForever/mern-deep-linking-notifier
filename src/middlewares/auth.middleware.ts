@@ -45,7 +45,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
             if ((payload.exp - payload.iat) / 2 > payload.exp - current_time) {
                 let newToken = jwt.generateJwt(
                     {
-                        _id: payload.id,
+                        _id: payload._id,
                         tokenVersion: payload.tokenVersion,
                     },
                     1,
