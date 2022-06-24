@@ -92,11 +92,8 @@ export const easyAuth = async (
     res: Response,
     next: NextFunction,
 ) => {
-    if (!req.headers.authorization) {
-        return res.status(401).json({
-            message: getMessage('default.unauthorized'),
-        });
-    }
+    if (!req.headers.authorization) next();
+
     const [, token] = req.headers.authorization
         ? req.headers.authorization.split(' ')
         : [, ''];
@@ -105,18 +102,10 @@ export const easyAuth = async (
     try {
         payload = jwt.verifyJwt(token, 1);
     } catch (err) {
-        const answer: { message: string; err?: string } = {
-            message: getMessage('default.unauthorized'),
-        };
-        if (err instanceof Error) answer.err = err.message;
-
-        return res.status(401).json(answer);
+        return next();
     }
 
-    if (payload.role !== 0 || payload.role !== 1)
-        return res.status(401).json({
-            message: getMessage('default.unauthorized'),
-        });
+    if (payload.role !== 0 || payload.role !== 1) next();
 
     payload.role = Boolean(payload.role);
 
@@ -130,13 +119,7 @@ export const easyAuth = async (
         admin: payload.role,
         tokenVersion: payload.tokenVersion,
     })
-        .then(result => {
-            if (!result) {
-                return res.status(401).json({
-                    message: getMessage('default.unauthorized'),
-                });
-            }
-
+        .then(() => {
             let current_time = Date.now().valueOf() / 1000;
             if ((payload.exp - payload.iat) / 2 > payload.exp - current_time) {
                 let newToken = jwt.generateJwt(
@@ -156,10 +139,6 @@ export const easyAuth = async (
             next();
         })
         .catch(err => {
-            console.log(err);
-            return res.status(400).json({
-                message: getMessage('default.badRequest'),
-                err: err,
-            });
+            next();
         });
 };
