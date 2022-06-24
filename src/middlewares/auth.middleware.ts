@@ -4,7 +4,94 @@ import User from '../models/user.model';
 import jwt from '../utils/jwt.util';
 import { getMessage } from '../utils/message.util';
 
-export const auth = async (req: Request, res: Response, next: NextFunction) => {
+export const auth = (roles: string[] = []) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        if (!req.headers.authorization) {
+            return res.status(401).json({
+                message: getMessage('default.unauthorized'),
+            });
+        }
+        const [, token] = req.headers.authorization
+            ? req.headers.authorization.split(' ')
+            : [, ''];
+
+        let payload: any = null;
+        try {
+            payload = jwt.verifyJwt(token, 1);
+        } catch (err) {
+            const answer: { message: string; err?: string } = {
+                message: getMessage('default.unauthorized'),
+            };
+            if (err instanceof Error) answer.err = err.message;
+
+            return res.status(401).json(answer);
+        }
+
+        if (payload.role !== 0 || payload.role !== 1)
+            return res.status(401).json({
+                message: getMessage('default.unauthorized'),
+            });
+
+        payload.role = Boolean(payload.role);
+        console.log(payload.role);
+        if (!payload.role && roles.includes('admin'))
+            return res.status(401).json({
+                message: getMessage('default.unauthorized'),
+            });
+
+        if (process.env.NODE_ENV == 'test') {
+            req.admin = payload.role;
+            return next();
+        }
+
+        User.exists({
+            _id: payload._id,
+            admin: payload.role,
+            tokenVersion: payload.tokenVersion,
+        })
+            .then(result => {
+                if (!result) {
+                    return res.status(401).json({
+                        message: getMessage('default.unauthorized'),
+                    });
+                }
+
+                let current_time = Date.now().valueOf() / 1000;
+                if (
+                    (payload.exp - payload.iat) / 2 >
+                    payload.exp - current_time
+                ) {
+                    let newToken = jwt.generateJwt(
+                        {
+                            _id: payload._id,
+                            role: Number(payload.role),
+                            tokenVersion: payload.tokenVersion,
+                        },
+                        1,
+                    );
+                    req.admin = payload.role;
+                    req.new_token = `${newToken}`;
+                    console.log(`New Token: ${newToken}`);
+                }
+                console.log('shall pass');
+                payload = null;
+                next();
+            })
+            .catch(err => {
+                console.log(err);
+                return res.status(400).json({
+                    message: getMessage('default.badRequest'),
+                    err: err,
+                });
+            });
+    };
+};
+
+export const easyAuth = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
     if (!req.headers.authorization) {
         return res.status(401).json({
             message: getMessage('default.unauthorized'),
@@ -18,20 +105,29 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         payload = jwt.verifyJwt(token, 1);
     } catch (err) {
-        if (err instanceof Error)
-            return res.status(401).json({
-                message: getMessage('default.unauthorized'),
-                err: err.message,
-            });
-        else
-            return res.status(401).json({
-                message: getMessage('default.unauthorized'),
-            });
+        const answer: { message: string; err?: string } = {
+            message: getMessage('default.unauthorized'),
+        };
+        if (err instanceof Error) answer.err = err.message;
+
+        return res.status(401).json(answer);
     }
-    if (process.env.NODE_ENV == 'test') return next();
+
+    if (payload.role !== 0 || payload.role !== 1)
+        return res.status(401).json({
+            message: getMessage('default.unauthorized'),
+        });
+
+    payload.role = Boolean(payload.role);
+
+    if (process.env.NODE_ENV == 'test') {
+        req.admin = payload.role;
+        return next();
+    }
 
     User.exists({
         _id: payload._id,
+        admin: payload.role,
         tokenVersion: payload.tokenVersion,
     })
         .then(result => {
@@ -40,16 +136,18 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
                     message: getMessage('default.unauthorized'),
                 });
             }
-            req.auth = payload._id;
+
             let current_time = Date.now().valueOf() / 1000;
             if ((payload.exp - payload.iat) / 2 > payload.exp - current_time) {
                 let newToken = jwt.generateJwt(
                     {
                         _id: payload._id,
+                        role: Number(payload.role),
                         tokenVersion: payload.tokenVersion,
                     },
                     1,
                 );
+                req.admin = payload.role;
                 req.new_token = `${newToken}`;
                 console.log(`New Token: ${newToken}`);
             }

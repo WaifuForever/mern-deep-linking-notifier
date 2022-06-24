@@ -1,6 +1,6 @@
 declare namespace Express {
     export interface Request {
-        auth?: string;
+        admin?: boolean;
         new_token?: string;
     }
 }
