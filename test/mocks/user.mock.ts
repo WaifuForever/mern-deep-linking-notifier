@@ -15,7 +15,7 @@ export const admin2: MockUser = {
     password: 'thisisanamaz312inGpasswrod@',
     admin: true,
     _id: '',
-    name: 'Jojo2',
+    name: 'Jojos',
 };
 
 export const admin3: MockUser = {
@@ -39,7 +39,7 @@ export const user2: MockUser = {
     password: 'thisisanamaz312inrealGpasswrod@',
     admin: false,
     _id: '',
-    name: 'Matt2',
+    name: 'Matts',
 };
 
 export const user3: MockUser = {

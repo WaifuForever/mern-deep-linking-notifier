@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import supertest from 'supertest';
 
 import { app } from '../../src/config/express.config';
+import { IUser } from '../../src/models/user.model';
 import { getMessage } from '../../src/utils/message.util';
 import { admin1, admin2, user1, user2 } from '../mocks/user.mock';
 
@@ -20,7 +21,7 @@ const createUser = (payload: any, token: string, statusCode: number) => {
                         response.body !== null,
                 ).toBeTruthy();
 
-                //console.log(response)
+                //console.log(response.body)
 
                 payload._id = response.body.data?._id
                     ? response.body.data._id
@@ -165,7 +166,70 @@ const findUser = (
     });
 };
 
-const schema = (payload: { _id: string; email: string; name: string }) => {
+const listUsers = (
+    documents: ISchema[],
+    token: string,
+    statusCode: number,
+    admin?: boolean,
+) => {
+    it(`GET /users ${documents.length} documents`, async () => {
+        let path = `/users${
+            admin === undefined ? '' : admin ? '?admin=true' : '?admin=false'
+        }`;
+
+        await supertest(app)
+            .get(path)
+            .set('Authorization', 'Bearer ' + token)
+            .then(response => {
+                // Check type and length
+                expect(
+                    typeof response.body === 'object' &&
+                        !Array.isArray(response.body) &&
+                        response.body !== null,
+                ).toBeTruthy();
+
+                switch (statusCode) {
+                    case 200:
+                        expect(response.status).toEqual(200);
+                        expect(response.body).toMatchObject({
+                            message:
+                                getMessage('user.list.success') +
+                                `: ${documents.length}`,
+                            data: documents.map(x => {
+                                return schema(x);
+                            }),
+                            metadata: {},
+                        });
+                        break;
+                    case 400:
+                        expect(response.status).toEqual(400);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('default.badRequest'),
+                            data: null,
+                            metadata: {},
+                        });
+                        break;
+                    case 404:
+                        expect(response.status).toEqual(404);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('user.notFound'),
+                            data: [],
+                            metadata: {},
+                        });
+                        break;
+                    default:
+                        expect(3).toBe(2);
+                        break;
+                }
+            });
+    });
+};
+
+interface ISchema extends IUser {
+    _id: string;
+}
+
+const schema = (payload: ISchema) => {
     return {
         _id: payload._id,
         email: payload.email,
@@ -173,4 +237,4 @@ const schema = (payload: { _id: string; email: string; name: string }) => {
     };
 };
 
-export { createUser, findUser };
+export { createUser, findUser, listUsers };

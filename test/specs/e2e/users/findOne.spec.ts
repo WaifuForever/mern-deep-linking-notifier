@@ -7,7 +7,7 @@ import { createUser, findUser } from '../../../helpers/user.helper';
 const describeif = (condition: boolean) =>
     condition ? describe : describe.skip;
 const runAll = true;
-describe('Author', () => {
+describe('User findUser', () => {
     let mockToken = adminToken(new mongoose.Types.ObjectId().toString())!;
 
     describeif(!runAll)('should accept', () => {

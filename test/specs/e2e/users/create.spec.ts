@@ -14,24 +14,24 @@ const describeif = (condition: boolean) =>
     condition ? describe : describe.skip;
 const runAll = true;
 
-describe('User', () => {
-    let mockToken = adminToken(new mongoose.Types.ObjectId().toString());
+describe('User createUser', () => {
+    let mockToken = adminToken(new mongoose.Types.ObjectId().toString())!;
 
     describeif(!runAll)('should accept', () => {
         describeif(runAll)('create admin', () => {
-            createUser(admin1, mockToken!, 200);
-            createUser(admin2, mockToken!, 200);
+            createUser(admin1, mockToken, 200);
+            createUser(admin2, mockToken, 200);
         });
-        describeif(runAll)('create user', () => {
-            createUser(user1, mockToken!, 200);
-            createUser(user2, mockToken!, 200);
+        describeif(!runAll)('create user', () => {
+            createUser(user1, mockToken, 200);
+            createUser(user2, mockToken, 200);
         });
     });
 
-    describeif(!runAll)('should fail', () => {
+    describeif(runAll)('should fail', () => {
         describeif(runAll)('invalid arguments', () => {
-            createUser(admin3, mockToken!, 400);
-            createUser(user3, mockToken!, 400);
+            createUser(admin3, mockToken, 400);
+            createUser(user3, mockToken, 400);
 
             describeif(!runAll)('invalid name', () => {
                 const wrongName = (change: any) => {
@@ -44,21 +44,21 @@ describe('User', () => {
                 };
 
                 describeif(runAll)('invalid type', () => {
-                    createUser(wrongName(2), mockToken!, 400);
+                    createUser(wrongName(2), mockToken, 400);
 
-                    createUser(wrongName(true), mockToken!, 400);
+                    createUser(wrongName(true), mockToken, 400);
 
-                    createUser(wrongName(false), mockToken!, 400);
+                    createUser(wrongName(false), mockToken, 400);
 
-                    createUser(wrongName(['']), mockToken!, 400);
+                    createUser(wrongName(['']), mockToken, 400);
 
                     createUser(
                         wrongName(JSON.stringify({ ...admin2 })),
-                        mockToken!,
+                        mockToken,
                         400,
                     );
 
-                    createUser(wrongName(undefined), mockToken!, 400);
+                    createUser(wrongName(undefined), mockToken, 400);
                 });
 
                 describeif(runAll)('invalid format', () => {
@@ -72,7 +72,7 @@ describe('User', () => {
                     ];
 
                     invalidList.forEach(value => {
-                        createUser(wrongName(''), mockToken!, 400);
+                        createUser(wrongName(''), mockToken, 400);
                     });
                 });
             });
@@ -88,21 +88,21 @@ describe('User', () => {
                 };
 
                 describeif(runAll)('invalid type', () => {
-                    createUser(wrongEmail(2), mockToken!, 400);
+                    createUser(wrongEmail(2), mockToken, 400);
 
-                    createUser(wrongEmail(true), mockToken!, 400);
+                    createUser(wrongEmail(true), mockToken, 400);
 
-                    createUser(wrongEmail(false), mockToken!, 400);
+                    createUser(wrongEmail(false), mockToken, 400);
 
-                    createUser(wrongEmail(['']), mockToken!, 400);
+                    createUser(wrongEmail(['']), mockToken, 400);
 
                     createUser(
                         wrongEmail(JSON.stringify({ ...admin2 })),
-                        mockToken!,
+                        mockToken,
                         400,
                     );
 
-                    createUser(wrongEmail(undefined), mockToken!, 400);
+                    createUser(wrongEmail(undefined), mockToken, 400);
                 });
 
                 describeif(runAll)('invalid format', () => {
@@ -132,7 +132,7 @@ describe('User', () => {
                         'crazy thing for sure 4ddb',
                     ];
                     invalidList.forEach(value => {
-                        createUser(wrongEmail(value), mockToken!, 400);
+                        createUser(wrongEmail(value), mockToken, 400);
                     });
                 });
             });
@@ -147,24 +147,24 @@ describe('User', () => {
                 };
 
                 describeif(runAll)('invalid type', () => {
-                    createUser(wrongPassword(2), mockToken!, 400);
+                    createUser(wrongPassword(2), mockToken, 400);
 
-                    createUser(wrongPassword(true), mockToken!, 400);
+                    createUser(wrongPassword(true), mockToken, 400);
 
-                    createUser(wrongPassword(false), mockToken!, 400);
+                    createUser(wrongPassword(false), mockToken, 400);
 
-                    createUser(wrongPassword(['']), mockToken!, 400);
+                    createUser(wrongPassword(['']), mockToken, 400);
 
                     createUser(
-                        wrongPassword(JSON.stringify({ ...admin2 })),
-                        mockToken!,
+                        wrongPassword(JSON.stringify({ temp: '32', num: 213 })),
+                        mockToken,
                         400,
                     );
 
-                    createUser(wrongPassword(undefined), mockToken!, 400);
+                    createUser(wrongPassword(undefined), mockToken, 400);
                 });
 
-                describeif(runAll)('invalid format', () => {
+                describeif(!runAll)('invalid format', () => {
                     const invalidList = [
                         '0.0.0.000',
                         '0000',
@@ -186,7 +186,7 @@ describe('User', () => {
                     ];
 
                     invalidList.forEach(value => {
-                        createUser(wrongPassword(''), mockToken!, 400);
+                        createUser(wrongPassword(''), mockToken, 400);
                     });
                 });
             });
