@@ -25,6 +25,7 @@ const signIn = async (req: Request, res: Response) => {
     const user = await User.findOne({ email: email }).select([
         'password',
         'tokenVersion',
+        'admin',
     ]);
 
     const match = user
@@ -36,21 +37,14 @@ const signIn = async (req: Request, res: Response) => {
             message: getMessage('default.unauthorized'),
         });
     }
+    const payload = {
+        _id: user!._id.toString(),
+        role: user!.admin ? 1 : 0,
+        tokenVersion: user!.tokenVersion!,
+    };
 
-    const token = jwt.generateJwt(
-        {
-            _id: user!._id.toString(),
-            tokenVersion: user!.tokenVersion!,
-        },
-        1,
-    );
-    const refreshToken = jwt.generateJwt(
-        {
-            _id: user!._id.toString(),
-            tokenVersion: user!.tokenVersion!,
-        },
-        2,
-    );
+    const token = jwt.generateJwt(payload, 1);
+    const refreshToken = jwt.generateJwt(payload, 2);
 
     req.headers.authorization = `Bearer ${token}`;
 

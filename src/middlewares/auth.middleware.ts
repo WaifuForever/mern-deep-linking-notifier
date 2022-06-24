@@ -16,6 +16,7 @@ export const auth = (roles: string[] = []) => {
             : [, ''];
 
         let payload: any = null;
+
         try {
             payload = jwt.verifyJwt(token, 1);
         } catch (err) {
@@ -27,13 +28,13 @@ export const auth = (roles: string[] = []) => {
             return res.status(401).json(answer);
         }
 
-        if (payload.role !== 0 || payload.role !== 1)
+        if (payload.role !== 0 && payload.role !== 1)
             return res.status(401).json({
                 message: getMessage('default.unauthorized'),
             });
 
         payload.role = Boolean(payload.role);
-        console.log(payload.role);
+
         if (!payload.role && roles.includes('admin'))
             return res.status(401).json({
                 message: getMessage('default.unauthorized'),
@@ -69,10 +70,11 @@ export const auth = (roles: string[] = []) => {
                         },
                         1,
                     );
-                    req.admin = payload.role;
+
                     req.new_token = `${newToken}`;
                     console.log(`New Token: ${newToken}`);
                 }
+                req.admin = payload.role;
                 console.log('shall pass');
                 payload = null;
                 next();
@@ -92,7 +94,7 @@ export const easyAuth = async (
     res: Response,
     next: NextFunction,
 ) => {
-    if (!req.headers.authorization) next();
+    if (!req.headers.authorization) return next();
 
     const [, token] = req.headers.authorization
         ? req.headers.authorization.split(' ')
@@ -105,7 +107,7 @@ export const easyAuth = async (
         return next();
     }
 
-    if (payload.role !== 0 || payload.role !== 1) next();
+    if (payload.role !== 0 && payload.role !== 1) return next();
 
     payload.role = Boolean(payload.role);
 
@@ -125,20 +127,21 @@ export const easyAuth = async (
                 let newToken = jwt.generateJwt(
                     {
                         _id: payload._id,
-                        role: Number(payload.role),
+                        role: payload.role ? 1 : 0,
                         tokenVersion: payload.tokenVersion,
                     },
                     1,
                 );
-                req.admin = payload.role;
+
                 req.new_token = `${newToken}`;
                 console.log(`New Token: ${newToken}`);
             }
+            req.admin = payload.role;
             console.log('shall pass');
             payload = null;
-            next();
+            return next();
         })
         .catch(err => {
-            next();
+            return next();
         });
 };
