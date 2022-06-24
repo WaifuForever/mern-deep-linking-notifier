@@ -46,9 +46,8 @@ const list = async (req: Request, res: Response) => {
     User.find(search)
         .select(selection)
         .then(result => {
-            console.log(result);
             return res.status(200).json({
-                message: getMessage('user.list.success'),
+                message: getMessage('user.list.success') + `: ${result.length}`,
                 data: result,
                 metadata: {},
             });
