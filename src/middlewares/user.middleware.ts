@@ -57,8 +57,23 @@ const store = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const list = async (req: Request, res: Response, next: NextFunction) => {
-    req.body = req.params = req.query = {};
-    next();
+    const schema = yup.object().shape({
+        admin: rules.admin,
+    });
+    req.body = {};
+
+    schema
+        .validate(req.query, { stripUnknown: true })
+        .then(result => {
+            req.query = result;
+            next();
+        })
+        .catch((err: any) => {
+            return res.status(400).json({
+                message: getMessage('default.badRequest'),
+                data: err.errors,
+            });
+        });
 };
 
 const findById = async (req: Request, res: Response, next: NextFunction) => {

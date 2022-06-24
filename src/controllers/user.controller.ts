@@ -33,8 +33,20 @@ const store = async (req: Request, res: Response) => {
 };
 
 const list = async (req: Request, res: Response) => {
-    User.find()
+    const search = req.admin
+        ? req.query.admin === undefined
+            ? {}
+            : { admin: req.query.admin }
+        : { admin: false };
+
+    const selection = req.admin
+        ? { _id: 1, email: 1, name: 1, admin: 1 }
+        : { _id: 1, email: 1, name: 1 };
+
+    User.find(search)
+        .select(selection)
         .then(result => {
+            console.log(result);
             return res.status(200).json({
                 message: getMessage('user.list.success'),
                 data: result,
