@@ -11,9 +11,9 @@ describe('User listUser', () => {
     let mockToken = adminToken(new mongoose.Types.ObjectId().toString())!;
     let mockToken2 = userToken(new mongoose.Types.ObjectId().toString())!;
 
-    describeif(runAll)('should accept', () => {
+    describeif(!runAll)('should accept', () => {
         listUsers([], mockToken, 200);
-        
+
         createUser(admin1, mockToken, 200);
         listUsers([admin1], mockToken, 200, true);
         listUsers([], mockToken, 200, false);
@@ -22,7 +22,6 @@ describe('User listUser', () => {
         listUsers([], mockToken2, 200, true);
         listUsers([], mockToken2, 200, false);
         listUsers([], mockToken2, 200);
-
 
         createUser(admin2, mockToken, 200);
         listUsers([admin1, admin2], mockToken, 200, true);
@@ -50,39 +49,38 @@ describe('User listUser', () => {
         listUsers([user1, user2], mockToken2, 200, true);
         listUsers([user1, user2], mockToken2, 200, false);
         listUsers([user1, user2], mockToken2, 200);
-        
     });
 
-    describeif(!runAll)('should reject', () => {
+    describeif(runAll)('should reject', () => {
         //ensure you have created authors beforehand, otherwise it will break
         describeif(runAll)('mock data', () => {
             createUser(admin1, mockToken, 200);
             createUser(admin2, mockToken, 200);
         });
-        describeif(!runAll)('invalid arguments', () => {
-            describeif(!runAll)('invalid name', () => {
+        describeif(runAll)('invalid arguments', () => {
+            describeif(runAll)('invalid name', () => {
                 //prettier-ignore
-                describeif(runAll)('invalid type', () => {
+                describeif(runAll)('invalid format', () => {      
+                    const invalidFormats = [
+                        "123",
+                        '-12',
+                        'dsada',
+                        "&admin=false",
+                        "#!@#!#1",
+                        "dsadsa",
+                        "",
+                        "         ",
+                        "\n\n\n\n\n\n",
+                        " \n \n "
+                    ]
                     
-                    listUsers([admin2], mockToken, 400);                 
-                    listUsers([admin2], mockToken, 400);
-                    
-                })
-                //prettier-ignore
-                describeif(!runAll)('invalid format', () => {                    
-                    listUsers([admin1], mockToken, 400);
-                    listUsers( [admin1], mockToken, 400);
-                    listUsers( [admin1], mockToken, 400);
-                    listUsers( [admin1], mockToken, 400);
-                    listUsers( [admin1], mockToken, 400);            
-                    listUsers( [admin2], mockToken, 400);
-                    listUsers( [admin2], mockToken, 400);
-                    listUsers([admin2], mockToken, 400);
-                    listUsers( [admin2], mockToken, 400);
+                    invalidFormats.forEach(value => {
+                        listUsers([admin1, admin2], mockToken, 400, value);
+                    })
+                  
                     
                 })
             });
-        
         });
     });
 });

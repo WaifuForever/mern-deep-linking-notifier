@@ -170,13 +170,19 @@ const listUsers = (
     documents: ISchema[],
     token: string,
     statusCode: number,
-    admin?: boolean,
+    admin?: any,
 ) => {
     it(`GET /users ${documents.length} documents`, async () => {
         let path = `/users${
-            admin === undefined ? '' : admin ? '?admin=true' : '?admin=false'
+            admin === undefined
+                ? ''
+                : admin
+                ? `?admin=${admin}`
+                : admin === ''
+                ? '?admin='
+                : '?admin=false'
         }`;
-
+        console.log(path);
         await supertest(app)
             .get(path)
             .set('Authorization', 'Bearer ' + token)
@@ -205,8 +211,7 @@ const listUsers = (
                         expect(response.status).toEqual(400);
                         expect(response.body).toMatchObject({
                             message: getMessage('default.badRequest'),
-                            data: null,
-                            metadata: {},
+                            data: expect.any(Array),
                         });
                         break;
                     case 404:
