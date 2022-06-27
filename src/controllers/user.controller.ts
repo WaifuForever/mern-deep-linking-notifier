@@ -114,12 +114,15 @@ const remove = async (req: Request, res: Response) => {
                 return res.status(200).json({ metadata: {} });
             return res
                 .status(404)
-                .json({ message: getMessage('default.badRequest') });
+                .json({
+                    message: getMessage('user.notFound'),
+                    metadata: {},
+                });
         })
         .catch(err => {
             return res.status(400).json({
                 message: getMessage('default.badRequest'),
-                error: err,
+                data: err,
             });
         });
 };
