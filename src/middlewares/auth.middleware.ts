@@ -42,6 +42,7 @@ export const auth = (roles: string[] = []) => {
 
         if (process.env.NODE_ENV == 'test') {
             req.admin = payload.role;
+            req.auth = payload._id;
             return next();
         }
 
@@ -75,6 +76,7 @@ export const auth = (roles: string[] = []) => {
                     console.log(`New Token: ${newToken}`);
                 }
                 req.admin = payload.role;
+                req.auth = payload._id;
                 console.log('shall pass');
                 payload = null;
                 next();
@@ -113,6 +115,7 @@ export const easyAuth = async (
 
     if (process.env.NODE_ENV == 'test') {
         req.admin = payload.role;
+        req.auth = payload._id;
         return next();
     }
 
@@ -137,6 +140,7 @@ export const easyAuth = async (
                 console.log(`New Token: ${newToken}`);
             }
             req.admin = payload.role;
+            req.auth = payload._id;
             console.log('shall pass');
             payload = null;
             return next();

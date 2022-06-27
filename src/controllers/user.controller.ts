@@ -105,7 +105,10 @@ const update = async (req: Request, res: Response) => {
 };
 
 const remove = async (req: Request, res: Response) => {
-    User.deleteOne({ _id: req.query._id })
+    const { _id } = req.query;
+    const search = _id !== req.auth ? { _id: _id, admin: false } : { _id: _id };
+
+    User.deleteOne(search)
         .then(result => {
             if (result.deletedCount !== 0)
                 return res.status(200).json({ metadata: {} });
