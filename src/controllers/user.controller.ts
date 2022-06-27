@@ -90,7 +90,6 @@ const update = async (req: Request, res: Response) => {
             if (result.matchedCount !== 0)
                 return res.status(200).json({
                     message: getMessage('user.update.success'),
-                    data: result,
                     metadata: {},
                 });
             return res

@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import * as yup from 'yup';
+import { SchemaOf } from 'yup';
+import { AnyObject } from 'yup/lib/types';
 import User, { IUser } from '../models/user.model';
 import { getMessage } from '../utils/message.util';
 
@@ -10,7 +12,28 @@ const isValidMongoIdRequired = (value: string) => {
         String(new mongoose.Types.ObjectId(value)) === value
     );
 };
-const rules = {
+
+type tRules = {
+    email: yup.StringSchema<string | undefined, AnyObject, string | undefined>;
+    name: yup.StringSchema<string | undefined, AnyObject, string | undefined>;
+    admin: yup.BooleanSchema<
+        boolean | undefined,
+        AnyObject,
+        boolean | undefined
+    >;
+    password: yup.StringSchema<
+        string | undefined,
+        AnyObject,
+        string | undefined
+    >;
+    mongoId: yup.StringSchema<
+        string | undefined,
+        AnyObject,
+        string | undefined
+    >;
+};
+
+const rules: tRules = {
     email: yup.string().email(),
     name: yup
         .string()
@@ -95,13 +118,29 @@ const findById = async (req: Request, res: Response, next: NextFunction) => {
             });
         });
 };
+type looseObject = {
+    [key in keyof tRules]: any;
+};
 
 const update = async (req: Request, res: Response, next: NextFunction) => {
     const schema = yup.object().shape({
-        email: rules.email.required(),
-        name: rules.name.required(),
+        email: rules.email,
+        name: rules.name,
         _id: rules.mongoId.required(),
     });
+
+    var obj: looseObject = {
+        email: undefined,
+        name: undefined,
+        admin: undefined,
+        password: undefined,
+        mongoId: undefined,
+    };
+
+    Object.keys(req.body).forEach(value => {
+        obj[value as keyof tRules] = rules[value as keyof tRules];
+    });
+
     req.params = req.query = {};
     schema
         .validate(req.body, { stripUnknown: true })
