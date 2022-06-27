@@ -230,6 +230,143 @@ const listUsers = (
     });
 };
 
+const updateUser = (
+    payload: any,
+    token: string,
+    message: string,
+    statusCode: number,
+    checkChanges: boolean = true,
+) => {
+    it(`PUT /users ${message}`, async () => {
+        //payload._id = payload._id === 1 ? writer._id : artist._id;
+        switch (payload._id) {
+            case 1:
+                payload._id = admin1._id;
+                break;
+            case 2:
+                payload._id = admin2._id;
+                break;
+            case 3:
+                payload._id = user1._id;
+                break;
+            case 4:
+                payload._id = user2._id;
+                break;
+            case -1:
+                payload._id = 'not an id';
+                break;
+
+            default:
+                payload._id = new mongoose.Types.ObjectId().toString();
+        }
+
+        await supertest(app)
+            .put('/users')
+            .send(payload)
+            .set('Authorization', 'Bearer ' + token)
+            .then(response => {
+                // Check type and length
+                expect(
+                    typeof response.body === 'object' &&
+                        !Array.isArray(response.body) &&
+                        response.body !== null,
+                ).toBeTruthy();
+
+                switch (statusCode) {
+                    case 200:
+                        console.log(response.body);
+                        expect(response.status).toEqual(200);
+
+                        expect(response.body.metadata).toBeDefined();
+
+                        expect(response.body).toMatchObject({
+                            message: getMessage('user.update.success'),
+                            metadata: {},
+                        });
+
+                        break;
+
+                    case 400:
+                        expect(response.status).toEqual(400);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('default.badRequest'),
+                            data: expect.any(Array),
+                        });
+                        break;
+
+                    case 401:
+                        expect(response.status).toEqual(401);
+                        break;
+
+                    case 404:
+                        expect(response.status).toEqual(404);
+
+                        expect(response.body.metadata).toBeDefined();
+
+                        expect(response.body).toMatchObject({
+                            message: getMessage('user.notFound'),
+                            metadata: {},
+                        });
+                        break;
+                    default:
+                        expect(2).toBe(3);
+                        break;
+                }
+            });
+    });
+
+    itif(checkChanges)('GET check previous PUT operation', async () => {
+        await supertest(app)
+            .get(`/users/findOne?_id=${payload._id}`)
+            .then(response => {
+                // Check type and length
+                expect(
+                    typeof response.body === 'object' &&
+                        !Array.isArray(response.body) &&
+                        response.body !== null,
+                ).toBeTruthy();
+
+                switch (statusCode) {
+                    case 200:
+                        expect(response.status).toEqual(200);
+
+                        expect(response.body).toMatchObject({
+                            message: getMessage('user.findOne.success'),
+                            data: payload,
+                            metadata: {},
+                        });
+                        break;
+                    case 400:
+                        expect(response.status).toEqual(200);
+
+                        expect(response.body).toMatchObject({
+                            message: getMessage('user.findOne.success'),
+                            metadata: {},
+                        });
+                        break;
+                    case 401:
+                        expect(response.status).toEqual(404);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('user.notFound'),
+                            metadata: expect.any(String),
+                        });
+                        break;
+
+                    case 404:
+                        expect(response.status).toEqual(404);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('user.notFound'),
+                            metadata: expect.any(String),
+                        });
+                        break;
+                    default:
+                        expect(2).toBe(3);
+                        break;
+                }
+            });
+    });
+};
+
 interface ISchema extends IUser {
     _id: string;
 }
@@ -242,4 +379,4 @@ const schema = (payload: ISchema) => {
     };
 };
 
-export { createUser, findUser, listUsers };
+export { createUser, findUser, listUsers, updateUser };
