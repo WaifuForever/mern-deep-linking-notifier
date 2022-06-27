@@ -367,6 +367,138 @@ const updateUser = (
     });
 };
 
+const deleteUser = (
+    payload: { _id: string | number },
+    token: string,
+    statusCode: number,
+    checkChanges: boolean = true,
+) => {
+    it('DELETE /users', async () => {
+        switch (payload._id) {
+            case 1:
+                payload._id = admin1._id;
+                break;
+            case 2:
+                payload._id = admin2._id;
+                break;
+            case 3:
+                payload._id = user1._id;
+                break;
+            case 4:
+                payload._id = user2._id;
+                break;
+            case -1:
+                payload._id = new mongoose.Types.ObjectId().toString();
+                break;
+        }
+
+        await supertest(app)
+            .delete(`/users?_id=${payload._id}`)
+            .set('Authorization', 'Bearer ' + token)
+            .then(response => {
+                // Check type and length
+                expect(
+                    typeof response.body === 'object' &&
+                        !Array.isArray(response.body) &&
+                        response.body !== null,
+                ).toBeTruthy();
+
+                switch (statusCode) {
+                    case 200:
+                        expect(response.status).toEqual(200);
+
+                        expect(response.body.metadata).toBeDefined();
+
+                        expect(response.body).toMatchObject({
+                            metadata: {},
+                        });
+
+                        break;
+
+                    case 400:
+                        expect(response.status).toEqual(400);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('default.badRequest'),
+                            data: expect.any(Array),
+                        });
+                        break;
+
+                    case 401:
+                        expect(response.status).toEqual(401);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('default.badRequest'),
+                        });
+                        break;
+
+                    case 404:
+                        expect(response.status).toEqual(404);
+
+                        expect(response.body.metadata).toBeDefined();
+
+                        expect(response.body).toMatchObject({
+                            message: getMessage('user.notFound'),
+                            metadata: {},
+                        });
+                        break;
+                    default:
+                        expect(2).toBe(3);
+                        break;
+                }
+            });
+    });
+
+    itif(checkChanges)('GET check previous DELETE operation', async () => {
+        await supertest(app)
+            .get(`/users/findOne?_id=${payload._id}`)
+            .then(response => {
+                // Check type and length
+                expect(
+                    typeof response.body === 'object' &&
+                        !Array.isArray(response.body) &&
+                        response.body !== null,
+                ).toBeTruthy();
+
+                switch (statusCode) {
+                    case 200:
+                        expect(response.status).toEqual(404);
+
+                        expect(response.body).toMatchObject({
+                            message: getMessage('user.notFound'),
+                            data: payload,
+                            metadata: {},
+                        });
+                        break;
+                    case 400:
+                        expect(response.status).toEqual(200);
+
+                        expect(response.body).toMatchObject({
+                            message: getMessage('user.findOne.success'),
+                            metadata: {},
+                        });
+                        break;
+                    case 401:
+                        expect(response.status).toEqual(200);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('user.findOne.success'),
+                            metadata: {},
+                        });
+                        break;
+
+                    case 404:
+                        expect(response.status).toEqual(404);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('user.notFound'),
+                            metadata: {},
+                        });
+                        break;
+                    default:
+                        expect(2).toBe(3);
+                        break;
+                }
+            });
+    });
+};
+
 interface ISchema extends IUser {
     _id: string;
 }
@@ -379,4 +511,4 @@ const schema = (payload: ISchema) => {
     };
 };
 
-export { createUser, findUser, listUsers, updateUser };
+export { createUser, findUser, listUsers, updateUser, deleteUser };
