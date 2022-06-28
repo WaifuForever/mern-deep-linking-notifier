@@ -21,3 +21,7 @@ export const userToken = (_id: string) => {
         1,
     );
 };
+
+export const corruptedToken = (payload: any, key?: number) => {
+    return jwt.generateJwt(payload, key ? key : 1);
+};

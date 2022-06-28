@@ -50,6 +50,12 @@ const createUser = (payload: any, token: string, statusCode: number) => {
                     case 401:
                         expect(response.status).toEqual(401);
                         break;
+                    case 422:
+                        expect(response.status).toEqual(422);
+                        expect(response.body).toMatchObject({
+                            message: getMessage('default.unprocessable'),
+                        });
+                        break;
 
                     default:
                         expect(2).toBe(3);
@@ -93,6 +99,15 @@ const createUser = (payload: any, token: string, statusCode: number) => {
                         break;
 
                     case 401:
+                        expect(response.status).toEqual(404);
+                        expect(response.body.metadata).toBeDefined();
+                        expect(response.body).toMatchObject({
+                            message: getMessage('user.notFound'),
+                        });
+
+                        break;
+
+                    case 422:
                         expect(response.status).toEqual(404);
                         expect(response.body.metadata).toBeDefined();
                         expect(response.body).toMatchObject({

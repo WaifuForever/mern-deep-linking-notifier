@@ -29,7 +29,40 @@ describe('User createUser', () => {
     });
 
     describeif(runAll)('should fail', () => {
+        describeif(runAll)('mock data', () => {
+            describeif(runAll)('create admin', () => {
+                createUser(admin1, mockToken, 200);
+                createUser(admin2, mockToken, 200);
+            });
+            describeif(runAll)('create user', () => {
+                createUser(user1, mockToken, 200);
+                createUser(user2, mockToken, 200);
+            });
+        })
         describeif(runAll)('invalid arguments', () => {
+            describeif(runAll)('duplicate email and name', () => {
+                describeif(runAll)('admin name', () => {
+                    createUser({...admin1, email: "different@email.com"}, mockToken, 422);
+                    //createUser({...admin1, email: "different@email.com", name: admin1.name.toUpperCase()}, mockToken, 422);
+                });
+    
+                describeif(runAll)('admin email', () => {
+                    createUser({...admin1, name: "otherName"}, mockToken, 422);
+                    //createUser({...admin1, name: "otherName", email: admin1.email.toUpperCase()}, mockToken, 422);
+                });
+    
+               
+                describeif(!runAll)('user name', () => {
+                    createUser({...user1, email: "different@email.com"}, mockToken, 422);
+                    //createUser({...user1, email: "different@email.com", name: user1.name.toUpperCase()}, mockToken, 422);
+                });
+                describeif(runAll)('user email', () => {
+                    createUser({...user1, name: "otherName"}, mockToken, 422);
+                    //createUser({...user1, name: "otherName", email: user1.email.toUpperCase()}, mockToken, 422);
+                });
+            })
+
+      
             createUser(admin3, mockToken, 400);
             createUser(user3, mockToken, 400);
 
@@ -42,7 +75,14 @@ describe('User createUser', () => {
 
                     return temp;
                 };
-
+                
+            describeif(runAll)('duplicate user name', () => {
+                createUser(user1, mockToken, 400);
+                createUser({email: "tempdsdassa@gmail.com", name: "jade", password: "Lucarneior0@32", admin: false}, mockToken, 404);
+                createUser({email: "tempdsdassa@fake.com", name: "JADE", password: "Lucarneior0@32", admin: false}, mockToken, 404);
+              
+            });
+                
                 describeif(runAll)('invalid type', () => {
                     createUser(wrongName(2), mockToken, 400);
 
@@ -136,7 +176,8 @@ describe('User createUser', () => {
                     });
                 });
             });
-            describeif(runAll)('invalid password', () => {
+
+            describeif(!runAll)('invalid password', () => {
                 const wrongPassword = (change: any) => {
                     let temp = { ...admin2 };
                     //can't send a null value
