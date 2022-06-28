@@ -25,9 +25,8 @@ const store = async (req: Request, res: Response) => {
             });
         })
         .catch(err => {
-            return res.status(400).json({
-                message: getMessage('default.badRequest'),
-                error: err,
+            return res.status(422).json({
+                message: getMessage('default.unprocessable'),
             });
         });
 };
@@ -112,12 +111,10 @@ const remove = async (req: Request, res: Response) => {
         .then(result => {
             if (result.deletedCount !== 0)
                 return res.status(200).json({ metadata: {} });
-            return res
-                .status(404)
-                .json({
-                    message: getMessage('user.notFound'),
-                    metadata: {},
-                });
+            return res.status(404).json({
+                message: getMessage('user.notFound'),
+                metadata: {},
+            });
         })
         .catch(err => {
             return res.status(400).json({
